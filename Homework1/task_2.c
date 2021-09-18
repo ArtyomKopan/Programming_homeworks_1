@@ -3,7 +3,7 @@
 
 const int INF = (int)1e9;
 
-int getMaximumMoreThanOnce(int *array, int arraySize)
+int getMaximumMoreThanOnce(int* array, int arraySize)
 {
     int maximum = -INF;
     for (int i = 0; i < arraySize; ++i)
@@ -14,7 +14,6 @@ int getMaximumMoreThanOnce(int *array, int arraySize)
                     break;
                 }
     return maximum;
-
 }
 
 int main()
@@ -23,7 +22,7 @@ int main()
     printf("Enter the number of elements of the array: ");
     scanf("%i", &arraySize);
     printf("\nEnter array elements separated by space: ");
-    int *array = (int*)calloc(arraySize, sizeof(int));
+    int* array = (int*)calloc(arraySize, sizeof(int));
     for (int i = 0; i < arraySize; ++i)
         scanf("%i", &array[i]);
 
