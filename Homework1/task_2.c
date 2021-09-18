@@ -29,5 +29,6 @@ int main()
     int maximumMoreThanOnes = getMaximumMoreThanOnce(array, arraySize);
     printf("The maximum element of an array that occurs more than once: ");
     printf("%i", maximumMoreThanOnes);
+    free(array);
     return 0;
 }
