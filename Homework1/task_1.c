@@ -1,13 +1,15 @@
 #include <stdio.h>
 
-int abs(int x) {
+int abs(int x)
+{
     if (x < 0)
         return -x;
     else
         return x;
 }
 
-int division(int a, int b) {
+int division(int a, int b)
+{
     int abs_a = abs(a);
     int abs_b = abs(b);
     int result = 0;
@@ -26,13 +28,14 @@ int division(int a, int b) {
     return result;
 }
 
-int main() {
+int main()
+{
     printf("Enter two integers A and B:\n");
     int a = 0, b = 0;
     printf("A =");
-    scanf_s("%i", &a);
+    scanf("%i", &a);
     printf("\nB =");
-    scanf_s("%i", &b);
+    scanf("%i", &b);
     if (b == 0)
         printf("ERROR! Division by zero!");
     else {
