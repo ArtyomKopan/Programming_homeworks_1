@@ -1,16 +1,18 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-const int INF = (int)1e9;
+bool isMaximumExist = false;
 
 int getMaximumMoreThanOnce(int* array, int arraySize)
 {
-    int maximum = -INF;
+    int maximum = array[0];
     for (int i = 0; i < arraySize; ++i)
         if (array[i] > maximum)
             for (int j = i + 1; j < arraySize; ++j)
                 if (array[j] == array[i]) {
                     maximum = array[i];
+                    isMaximumExist = true;
                     break;
                 }
     return maximum;
@@ -27,8 +29,11 @@ int main()
         scanf("%i", &array[i]);
 
     int maximumMoreThanOnes = getMaximumMoreThanOnce(array, arraySize);
-    printf("The maximum element of an array that occurs more than once: ");
-    printf("%i", maximumMoreThanOnes);
-    free(array);
+    if (!isMaximumExist)
+        printf("There is no maximum value that occurs more than once ");
+    else {
+        printf("The maximum element of an array that occurs more than once: ");
+        printf("%i", maximumMoreThanOnes);
+    }
     return 0;
 }
