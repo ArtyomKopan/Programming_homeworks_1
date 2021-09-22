@@ -1,16 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
+void fillArray(int** array, int n)
 {
-    int n = 0;
-    int** array;
-    printf("Enter an integer - the size of the array: ");
-    scanf("%i", &n);
-    array = (int**)calloc(n, sizeof(*array));
-    for (int i = 0; i < n; ++i)
-        array[i] = (int*)calloc(n, sizeof(*array[i]));
-
     int nowValueForFilling = n * n;
     int i = 0, j = n - 1;
     int direction = 0;
@@ -47,13 +39,34 @@ int main()
                 i--;
         }
     }
+}
 
+void printArray(int** array, int n)
+{
     printf("An array filled with numbers from 1 to n^2 in a spiral: \n");
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j)
             printf("%4i ", array[i][j]);
         printf("\n");
     }
+}
+
+int main()
+{
+    int n = 0;
+    int** array;
+    printf("Enter an integer - the size of the array: ");
+    scanf("%i", &n);
+    array = (int**)calloc(n, sizeof(*array));
+    for (int i = 0; i < n; ++i)
+        array[i] = (int*)calloc(n, sizeof(*array[i]));
+
+    fillArray(array, n);
+
+    printArray(array, n);
+
+    for (int i = 0; i < n; ++i)
+        free(array[i]);
     free(array);
     return 0;
 }
