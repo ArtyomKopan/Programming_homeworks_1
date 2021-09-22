@@ -22,7 +22,7 @@ int main()
     printf("Enter the array elements separated by a space: ");
     for (int i = 0; i < m + n; ++i)
         scanf("%i", &array[i]);
-    
+
     swapBeginningWithEnd(array, m, n);
 
     for (int i = 0; i < m + n; ++i)
