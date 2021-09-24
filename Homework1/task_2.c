@@ -31,5 +31,6 @@ int main()
         printf("The maximum element of an array that occurs more than once: ");
         printf("%i", array[maximumMoreThanOnes]);
     }
+    free(array);
     return 0;
 }
