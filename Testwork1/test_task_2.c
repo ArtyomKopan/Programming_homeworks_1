@@ -30,9 +30,7 @@ int main(int argc, char* argv[])
     }
 
     printList(first, outputFile);
-    printf("\n");
     printList(second, outputFile);
-    printf("\n");
     printList(third, outputFile);
 
     fclose(inputFile);
