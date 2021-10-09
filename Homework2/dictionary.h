@@ -5,17 +5,17 @@
 #include <stdbool.h>
 
 typedef struct Dictionary Dictionary;
-typedef struct DictElement DictElement;
+typedef struct DictionaryElement DictionaryElement;
 
-struct DictElement {
+struct DictionaryElement {
     char* key;
     int value;
-    DictElement* nextElement;
+    DictionaryElement* nextElement;
 };
 
 struct Dictionary {
-    DictElement* head;
-    DictElement* tail;
+    DictionaryElement* head;
+    DictionaryElement* tail;
     int dictSize;
 };
 

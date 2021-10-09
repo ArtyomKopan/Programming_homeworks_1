@@ -1,34 +1,17 @@
 #include "dictionary.h"
-#include <stddef.h>
 #include <stdio.h>
-#include <string.h>
 
 void readInputFile(FILE* inputFile, Dictionary* dict)
 {
     char word[128];
-    while ((fscanf(inputFile, "%s", word)) != EOF) {
-        if (!hasKey(dict, word))
-            put(dict, word, 1);
-        else {
-            DictElement* currentElement = dict->head;
-            while (currentElement != NULL) {
-                if (strcmp(currentElement->key, word) == 0) {
-                    currentElement->value++;
-                    break;
-                }
-                currentElement = currentElement->nextElement;
-            }
-        }
-    }
+    while ((fscanf(inputFile, "%s", word)) != EOF)
+        put(dict, word, get(dict, word) + 1);
 }
 
 void writeOutputFile(FILE* outputFile, Dictionary* dict)
 {
-    DictElement* currentElement = dict->head;
-    while (currentElement != NULL) {
-        fprintf(outputFile, "%s,%i\n", currentElement->key, currentElement->value);
-        currentElement = currentElement->nextElement;
-    }
+    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
+        fprintf(outputFile, "%s,%i\n", current->key, current->value);
     printf("Data processing was successfully!");
 }
 
@@ -37,8 +20,16 @@ int main(int argc, char* argv[])
     FILE* inputFile = fopen(argv[1], "r");
     FILE* outputFile = fopen(argv[2], "w");
 
-    if (inputFile == NULL || outputFile == NULL) {
-        printf("File open error!");
+    if (!inputFile && !outputFile) {
+        printf("Input and output files open error!");
+        return 0;
+    } else if (!inputFile) {
+        printf("Input file open error!");
+        fclose(outputFile);
+        return 0;
+    } else if (!outputFile) {
+        printf("Output file open error!");
+        fclose(inputFile);
         return 0;
     }
 

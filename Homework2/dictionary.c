@@ -13,9 +13,9 @@ Dictionary* makeNewDictionary()
     return dict;
 }
 
-DictElement* makeNewDictElement(const char* key, int value)
+DictionaryElement* makeNewDictionaryElement(const char* key, int value)
 {
-    DictElement* newElement = malloc(sizeof(DictElement));
+    DictionaryElement* newElement = malloc(sizeof(DictionaryElement));
     newElement->key = malloc((strlen(key) + 1) * sizeof(char));
     stpcpy(newElement->key, key);
     newElement->value = value;
@@ -25,52 +25,54 @@ DictElement* makeNewDictElement(const char* key, int value)
 
 void put(Dictionary* dict, const char* key, int value)
 {
-    DictElement* newElement = makeNewDictElement(key, value);
-    if (dict->head == NULL) {
-        dict->head = newElement;
-        dict->tail = newElement;
-    } else {
-        DictElement* penultimateElement = dict->tail;
-        dict->tail = newElement;
-        penultimateElement->nextElement = dict->tail;
-    }
-    dict->dictSize++;
+    if (!hasKey(dict, key)) {
+        DictionaryElement* newElement = makeNewDictionaryElement(key, value);
+        if (!dict->head) {
+            dict->head = newElement;
+            dict->tail = newElement;
+        } else {
+            dict->tail->nextElement = newElement;
+            dict->tail = newElement;
+        }
+        dict->dictSize++;
+    } else
+        for (DictionaryElement* current = dict->head; current; current = current->nextElement)
+            if (strcmp(current->key, key) == 0) {
+                current->value = value;
+                break;
+            }
 }
 
 int get(Dictionary* dict, const char* key)
 {
-    if (dict->head == NULL)
-        return -1; // элемент не найден
-    DictElement* currentElement = dict->head;
-    while (currentElement != NULL) {
-        if (strcmp(currentElement->key, key) == 0)
-            return currentElement->value; // элемент найден
-        currentElement = currentElement->nextElement;
-    }
-    return -1; // элемент не найден
+    if (!dict->head)
+        return 0; // элемент не найден
+    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
+        if (strcmp(current->key, key) == 0)
+            return current->value; // элемент найден
+    return 0; // элемент не найден
 }
 
 bool hasKey(Dictionary* dict, const char* key)
 {
-    if (dict->head == NULL)
+    if (!dict->head)
         return false;
-    DictElement* currentElement = dict->head;
-    while (currentElement != NULL) {
-        if (strcmp(currentElement->key, key) == 0)
+    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
+        if (strcmp(current->key, key) == 0)
             return true;
-        currentElement = currentElement->nextElement;
-    }
     return false;
 }
 
 void deleteDictionary(Dictionary* dict)
 {
-    DictElement* currentElement = dict->head;
-    DictElement* nextElement = NULL;
+    DictionaryElement* currentElement = dict->head;
+    DictionaryElement* nextElement = NULL;
     while (currentElement) {
         nextElement = currentElement->nextElement;
         free(currentElement);
         currentElement = nextElement;
     }
+    free(currentElement);
+    free(nextElement);
     free(dict);
 }
