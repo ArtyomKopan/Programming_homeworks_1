@@ -43,24 +43,28 @@ void put(Dictionary* dict, const char* key, int value)
             }
 }
 
+DictionaryElement* find(Dictionary* dict, const char* key)
+{
+    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
+        if (strcmp(current->key, key) == 0)
+            return current;
+    return NULL;
+}
+
 int get(Dictionary* dict, const char* key)
 {
     if (!dict->head)
         return 0; // элемент не найден
-    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
-        if (strcmp(current->key, key) == 0)
-            return current->value; // элемент найден
-    return 0; // элемент не найден
+    DictionaryElement* foundElement = find(dict, key);
+    if (foundElement)
+        return foundElement->value; // элемент найден
+    else
+        return 0; // элемент не найден
 }
 
 bool hasKey(Dictionary* dict, const char* key)
 {
-    if (!dict->head)
-        return false;
-    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
-        if (strcmp(current->key, key) == 0)
-            return true;
-    return false;
+    return find(dict, key);
 }
 
 void deleteDictionary(Dictionary* dict)
