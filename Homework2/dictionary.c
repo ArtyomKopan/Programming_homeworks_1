@@ -23,9 +23,18 @@ DictionaryElement* makeNewDictionaryElement(const char* key, int value)
     return newElement;
 }
 
+DictionaryElement* find(Dictionary* dict, const char* key)
+{
+    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
+        if (strcmp(current->key, key) == 0)
+            return current;
+    return NULL;
+}
+
 void put(Dictionary* dict, const char* key, int value)
 {
-    if (!hasKey(dict, key)) {
+    DictionaryElement* currentElement = find(dict, key);
+    if (!currentElement) {
         DictionaryElement* newElement = makeNewDictionaryElement(key, value);
         if (!dict->head) {
             dict->head = newElement;
@@ -36,19 +45,7 @@ void put(Dictionary* dict, const char* key, int value)
         }
         dict->dictSize++;
     } else
-        for (DictionaryElement* current = dict->head; current; current = current->nextElement)
-            if (strcmp(current->key, key) == 0) {
-                current->value = value;
-                break;
-            }
-}
-
-DictionaryElement* find(Dictionary* dict, const char* key)
-{
-    for (DictionaryElement* current = dict->head; current; current = current->nextElement)
-        if (strcmp(current->key, key) == 0)
-            return current;
-    return NULL;
+        currentElement->value = value;
 }
 
 int get(Dictionary* dict, const char* key)
