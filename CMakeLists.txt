@@ -17,3 +17,5 @@ add_executable(task_1.1 Homework1/task_1.c)
 add_executable(task_1.2 Homework1/task_2.c)
 
 add_executable(task_1.3 Homework1/task_3.c)
+
+add_executable(task_3.3 Homework3/task_3.3.c)
