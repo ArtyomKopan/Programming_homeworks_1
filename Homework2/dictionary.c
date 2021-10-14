@@ -50,8 +50,6 @@ void put(Dictionary* dict, const char* key, int value)
 
 int get(Dictionary* dict, const char* key)
 {
-    if (!dict->head)
-        return 0; // элемент не найден
     DictionaryElement* foundElement = find(dict, key);
     if (foundElement)
         return foundElement->value; // элемент найден
@@ -69,6 +67,7 @@ void deleteDictionary(Dictionary* dict)
     DictionaryElement* currentElement = dict->head;
     DictionaryElement* nextElement = NULL;
     while (currentElement) {
+        free(currentElement->key);
         nextElement = currentElement->nextElement;
         free(currentElement);
         currentElement = nextElement;
