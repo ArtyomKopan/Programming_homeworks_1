@@ -1,54 +1,43 @@
 #include "list.h"
-#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
-// ищет индекс первого вхождения последовательности pattern в список lst
-int search(List* lst, char pattern[])
+// ищет индекс первого вхождения последовательности pattern в список list строго после позиции after
+int search(List* list, char* pattern, int after)
 {
     int index = 0;
-    ListElement* currentElement = lst->head;
-    while (currentElement) {
-        if (currentElement->data == pattern[0]) {
-            ListElement* now = currentElement;
-            bool found = true;
-            for (int j = 1; j < strlen(pattern); ++j) {
-                now = now->next;
-                if (now == NULL || now->data != pattern[j]) {
-                    found = false;
-                    break;
-                }
-            }
-            if (found)
+    for (ListElement* current = get(list, after + 1); current; current = current->next) {
+        ListElement* element = current;
+        for (char* pointer = pattern;; pointer++) {
+            if (!*pointer)
                 return index;
+            if (!element || element->data != *pointer)
+                break;
+            element = element->next;
         }
         index++;
-        currentElement = currentElement->next;
     }
     return -1;
 }
 
-void insert(List* lst, char start[], char fragment[])
+void insert(List* list, char* start, char* fragment)
 {
-    int startIndex = search(lst, start) + strlen(start);
-    for (int i = 0; i < strlen(fragment); ++i)
-        addElement(lst, fragment[i], startIndex + i);
+    int startIndex = search(list, start, -1) + strlen(start);
+    addElements(list, fragment, strlen(fragment), startIndex);
 }
 
-void delete (List* lst, char start[], char end[])
+void delete (List* list, char* start, char* end)
 {
-    int startIndex = search(lst, start);
-    int endIndex = search(lst, end) + strlen(end);
-    for (int i = startIndex; i < endIndex; ++i)
-        deleteElementByIndex(lst, startIndex);
+    int startIndex = search(list, start, -1);
+    int endIndex = search(list, end, startIndex + strlen(start) - 1) + strlen(end);
+    deleteRange(list, startIndex, endIndex - 1);
 }
 
-void replace(List* lst, char* template, char* fragment)
+void replace(List* list, char* template, char* fragment)
 {
-    int startIndex = search(lst, template);
-    delete (lst, template, template);
-    for (int i = 0; i < strlen(fragment); ++i)
-        addElement(lst, fragment[i], startIndex + i);
+    int startIndex = search(list, template, -1);
+    delete (list, template, template);
+    addElements(list, fragment, strlen(fragment), startIndex);
 }
 
 int main(int argc, char* argv[])
@@ -56,20 +45,28 @@ int main(int argc, char* argv[])
     FILE* inputFile = fopen(argv[1], "r");
     FILE* outputFile = fopen(argv[2], "w");
 
-    if (inputFile == NULL || outputFile == NULL) {
-        printf("File open error!");
+    if (!inputFile && !outputFile) {
+        printf("Input and output file open error!");
+        return 0;
+    } else if (!inputFile) {
+        printf("Input file open error!");
+        fclose(outputFile);
+        return 0;
+    } else if (!outputFile) {
+        printf("Output file open error!");
+        fclose(inputFile);
         return 0;
     }
 
-    List* lst = makeNewList();
+    List* list = makeNewList();
 
-    int lengthDNA = 0, operationsCount = 0;
+    int lengthDNA = 0;
+    int operationsCount = 0;
     fscanf(inputFile, "%i", &lengthDNA);
     char dna[lengthDNA + 1];
 
     fscanf(inputFile, "%s", dna);
-    for (int i = 0; i < lengthDNA; ++i)
-        addElement(lst, dna[i], i);
+    addElements(list, dna, lengthDNA, 0);
     fscanf(inputFile, "%i", &operationsCount);
 
     for (int k = 0; k < operationsCount; ++k) {
@@ -79,21 +76,21 @@ int main(int argc, char* argv[])
             char start[128];
             char fragment[128];
             fscanf(inputFile, "%s %s", start, fragment);
-            insert(lst, start, fragment);
+            insert(list, start, fragment);
         } else if (strcmp(operation, "DELETE") == 0) {
             char start[128];
             char end[128];
             fscanf(inputFile, "%s %s", start, end);
-            delete (lst, start, end);
+            delete (list, start, end);
         } else {
             char template[128];
             char fragment[128];
             fscanf(inputFile, "%s %s", template, fragment);
-            replace(lst, template, fragment);
+            replace(list, template, fragment);
         }
-        printListAsString(lst, outputFile);
+        printList(list, outputFile);
     }
-    deleteList(lst);
+    deleteList(list);
     fclose(inputFile);
     fclose(outputFile);
     printf("Data processing was successful!");

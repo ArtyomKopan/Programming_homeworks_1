@@ -5,30 +5,25 @@
 #include <bits/types/FILE.h>
 #include <stdbool.h>
 
-typedef struct List List;
-typedef struct ListElement ListElement;
-
-struct ListElement {
+typedef struct ListElement {
     char data;
-    ListElement* prev;
-    ListElement* next;
-};
+    struct ListElement* previous;
+    struct ListElement* next;
+} ListElement;
 
-struct List {
+typedef struct List {
     ListElement* head;
     ListElement* tail;
     int listSize;
-};
-
-typedef struct List List;
-typedef struct ListElement ListElement;
+} List;
 
 List* makeNewList();
-void deleteList(List* lst);
+void deleteList(List* list);
+ListElement* get(List* list, int position);
+void addElement(List* list, char data, int position);
+void addElements(List* list, char* data, int dataSize, int position);
+void deleteElement(List* list, int position);
+void deleteRange(List* list, int start, int end);
+void printList(List* list, FILE* outputFile);
 
-void addElement(List* lst, char data, int position);
-void deleteElementByIndex(List* lst, int position);
-
-int getListSize(List* l);
-void printListAsString(List* l, FILE* outputFile);
-#endif // HOMEWORK2_LIST_H
+#endif

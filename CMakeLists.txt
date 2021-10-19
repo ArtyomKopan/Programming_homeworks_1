@@ -18,4 +18,12 @@ add_executable(task_1.2 Homework1/task_2.c)
 
 add_executable(task_1.3 Homework1/task_3.c)
 
+<<<<<<< HEAD
 add_executable(task_2.2 Homework2/task_2.2.c Homework2/list.c)
+=======
+
+add_executable(task_2.1 Homework2/task_2.1.c Homework2/dictionary.c)
+
+add_executable(test_task_1 Testwork1/test_task_1.c Testwork1/vector.c)
+add_executable(test_task_2 Testwork1/test_task_2.c Testwork1/list.c)
+>>>>>>> d18282761ae882c9baf09179eb07ba4b57ad0ea7
