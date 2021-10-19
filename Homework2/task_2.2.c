@@ -26,7 +26,7 @@ void insert(List* list, char* start, char* fragment)
     addElements(list, fragment, strlen(fragment), startIndex);
 }
 
-void delete (List* list, char* start, char* end)
+void delete(List* list, char* start, char* end)
 {
     int startIndex = search(list, start, -1);
     int endIndex = search(list, end, startIndex + strlen(start) - 1) + strlen(end);
@@ -36,7 +36,7 @@ void delete (List* list, char* start, char* end)
 void replace(List* list, char* template, char* fragment)
 {
     int startIndex = search(list, template, -1);
-    delete (list, template, template);
+    delete(list, template, template);
     addElements(list, fragment, strlen(fragment), startIndex);
 }
 
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
             char start[128];
             char end[128];
             fscanf(inputFile, "%s %s", start, end);
-            delete (list, start, end);
+            delete(list, start, end);
         } else {
             char template[128];
             char fragment[128];
