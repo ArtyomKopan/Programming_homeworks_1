@@ -4,17 +4,15 @@
 
 void printBinaryNumber(int* b)
 {
-    if (b[0] == 0)
-        printf("+");
-    else
-        printf("-");
+    printf("%c", (b[0] == 0) ? '+' : '-');
     for (int i = firstNonZeroBit(b); i < MAX_NUMBER_LENGTH; ++i)
         printf("%i", b[i]);
 }
 
 int main()
 {
-    int x = 0, y = 0;
+    int x = 0;
+    int y = 0;
     printf("Enter the first number: ");
     scanf("%i", &x);
     printf("Enter the second number: ");

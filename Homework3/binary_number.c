@@ -24,13 +24,10 @@ int firstNonZeroBit(int* b)
 
 void toReverseCode(int* b)
 {
-    if (b[0] == 1)
-        for (int i = 1; i < MAX_NUMBER_LENGTH; ++i) {
-            if (b[i] == 0)
-                b[i] = 1;
-            else
-                b[i] = 0;
-        }
+    if (b[0] == 0)
+        return;
+    for (int i = 1; i < MAX_NUMBER_LENGTH; ++i)
+        b[i] = 1 - b[i];
 }
 
 int* sum(int* a, int* b)
@@ -41,30 +38,14 @@ int* sum(int* a, int* b)
     int carry = 0;
     for (int i = MAX_NUMBER_LENGTH - 1; i >= 0; --i) {
         int tempSum = a[i] + b[i] + carry;
-        if (tempSum <= 1) {
-            result[i] = tempSum;
-            carry = 0;
-        } else if (tempSum == 2) {
-            result[i] = 0;
-            carry = 1;
-        } else {
-            result[i] = 1;
-            carry = 1;
-        }
+        result[i] = tempSum % 2;
+        carry = (tempSum <= 1) ? 0 : 1;
     }
     if (carry == 1) {
         for (int i = MAX_NUMBER_LENGTH - 1; i >= 0; --i) {
             int tempSum = result[i] + carry;
-            if (tempSum <= 1) {
-                result[i] = tempSum;
-                carry = 0;
-            } else if (tempSum == 2) {
-                result[i] = 0;
-                carry = 1;
-            } else {
-                result[i] = 1;
-                carry = 1;
-            }
+            result[i] = tempSum % 2;
+            carry = (tempSum <= 1) ? 0 : 1;
         }
     }
     toReverseCode(result);
