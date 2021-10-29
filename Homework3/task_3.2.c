@@ -1,22 +1,13 @@
+#include <memory.h>
+#include <stdint.h>
 #include <stdio.h>
 
-int power2(int x)
+int64_t abs(int64_t x)
 {
-    return 1 << x;
-}
-
-int log2(double x)
-{
-    if (x == 0)
-        return 0;
-    int i = 0;
-    int power = power2(i);
-    while (x > power)
-        power = power2(++i);
-    if (x == power)
-        return i;
+    if (x < 0)
+        return -x;
     else
-        return i - 1;
+        return x;
 }
 
 int main()
@@ -24,16 +15,19 @@ int main()
     double x = 0;
     printf("Enter a real number: ");
     scanf("%lf", &x);
+
+    int64_t i = 0;
+    memcpy(&i, &x, sizeof(double));
+
     printf("Result: ");
+    printf("%c", (i >> 63 == 0) ? '+' : '-');
 
-    if (x < 0) {
-        printf("%s", "-");
-        x = -x;
-    } else if (x > 0)
-        printf("%s", "+");
+    int64_t exponent = abs(i >> 52) - 1023;
 
-    int exponent = log2(x);
-    double mantissa = x / power2(exponent);
-    printf("%lf*2^%i", mantissa, exponent);
+    int64_t bitMask = 0;
+    for (int k = 12; k < 64; ++k)
+        bitMask = bitMask * 2 + 1;
+    double mantissa = (double)(i & bitMask) / (double)((int64_t)1 << 52) + 1;
+    printf("%lf*2^%ld", mantissa, exponent);
     return 0;
 }
