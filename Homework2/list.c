@@ -25,8 +25,6 @@ ListElement* get(List* list, int position)
 {
     if (position < 0 || position >= list->listSize)
         return NULL;
-    if (position == 0)
-        return list->head;
     ListElement* element = list->head;
     for (int i = 0; i < position; ++i)
         element = element->next;
@@ -39,10 +37,7 @@ void addElement(List* list, char data, int position)
         return;
     ListElement* element = makeNewListElement(data);
     element->previous = get(list, position - 1);
-    if (position == 0)
-        element->next = list->head;
-    else
-        element->next = element->previous ? element->previous->next : NULL;
+    element->next = element->previous ? element->previous->next : list->head;
     if (element->next)
         element->next->previous = element;
     else
@@ -56,43 +51,26 @@ void addElement(List* list, char data, int position)
 
 void addElements(List* list, char* data, int dataSize, int position)
 {
-    if (position < 0 || position > list->listSize)
+    if (position < 0 || position > list->listSize || dataSize == 0)
         return;
     ListElement* previous = get(list, position - 1);
     ListElement* next = get(list, position);
-    ListElement** temp = malloc(sizeof(ListElement) * dataSize);
+    ListElement** temp = malloc(sizeof(ListElement*) * dataSize);
     for (int i = 0; i < dataSize; ++i)
         temp[i] = makeNewListElement(data[i]);
-    for (int i = 0; i < dataSize; ++i) {
-        if (i > 0)
-            temp[i]->previous = temp[i - 1];
-        if (i < dataSize - 1)
-            temp[i]->next = temp[i + 1];
+    for (int i = 0; i < dataSize - 1; i++) {
+        temp[i]->next = temp[i + 1];
+        temp[i + 1]->previous = temp[i];
     }
-    if (list->listSize == 0) {
+    if (!previous) // Добавляем в начало списка (ну либо список пуст, тогда любое добавление - добавление в начало)
         list->head = temp[0];
-        list->tail = temp[dataSize - 1];
-    } else if (list->listSize == 1) {
-        if (position == 0) {
-            temp[dataSize - 1]->next = list->head;
-            list->head->previous = temp[dataSize - 1];
-            list->head = temp[0];
-        } else {
-            temp[0]->previous = list->tail;
-            list->tail->next = temp[0];
-            list->tail = temp[dataSize - 1];
-        }
-    } else if (!previous) {
-        temp[dataSize - 1]->next = list->head;
-        list->head->previous = temp[dataSize - 1];
-        list->head = temp[0];
-    } else if (!next) {
-        temp[0]->previous = list->tail;
-        list->tail->next = temp[0];
-        list->tail = temp[dataSize - 1];
-    } else {
+    else { // Есть предыдущий элемент
         temp[0]->previous = previous;
         previous->next = temp[0];
+    }
+    if (!next) // Добавляем в конец (либо список пуст и всё равно можно считать, что добавляем в конец)
+        list->tail = temp[dataSize - 1];
+    else { // Следующий элемент существует
         temp[dataSize - 1]->next = next;
         next->previous = temp[dataSize - 1];
     }
@@ -105,12 +83,14 @@ void deleteElement(List* list, int position)
     if (position < 0 || position >= list->listSize)
         return;
     ListElement* element = get(list, position);
-    element->next->previous = element->previous;
-    element->previous->next = element->next;
-    if (position == 0)
-        list->head = element->next;
-    if (position == list->listSize - 1)
+    if (element->next) // следующий элемент существует
+        element->next->previous = element->previous;
+    else // удаляем последний элемент списка
         list->tail = element->previous;
+    if (element->previous) // предыдущий элемент существует
+        element->previous->next = element->next;
+    else // удаляем первый элемент списка
+        list->head = element->next;
     free(element);
     list->listSize--;
 }
