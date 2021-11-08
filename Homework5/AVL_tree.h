@@ -3,6 +3,7 @@
 #define HOMEWORK5_AVL_TREE_H
 
 #include "values.h"
+#include <stdbool.h>
 
 typedef struct Tree Tree;
 
