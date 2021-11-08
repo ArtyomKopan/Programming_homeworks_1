@@ -27,3 +27,5 @@ add_executable(test_task_1 Testwork1/test_task_1.c Testwork1/vector.c)
 add_executable(test_task_2 Testwork1/test_task_2.c Testwork1/list.c)
 
 add_executable(task_3.1 Homework3/task_3.1.c Homework3/binary_number.c)
+
+add_executable(task_5.1 Homework5/task_5.1.c Homework5/AVL_tree.c)
