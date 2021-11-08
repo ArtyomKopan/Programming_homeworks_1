@@ -20,39 +20,38 @@ int max(int a, int b)
 
 int getHeight(Tree* tree)
 {
-    return (tree) ? tree->height : 0;
+    return tree ? tree->height : 0;
 }
 
 int balanceFactor(Tree* tree)
 {
-    return getHeight(tree->right) - getHeight(tree->left);
+    return tree ? getHeight(tree->right) - getHeight(tree->left) : 0;
 }
 
 void fixHeight(Tree* tree)
 {
-    int heightLeft = getHeight(tree->left);
-    int heightRight = getHeight(tree->right);
-    tree->height = max(heightLeft, heightRight) + 1;
+    if (tree)
+        tree->height = max(getHeight(tree->left), getHeight(tree->right)) + 1;
 }
 
 Tree* rotateRight(Tree* tree)
 {
-    Tree* newRoot = tree->left;
-    tree->left = newRoot->right;
-    newRoot->right = tree;
+    Tree* newTree = tree->left;
+    tree->left = newTree->right;
+    newTree->right = tree;
     fixHeight(tree);
-    fixHeight(newRoot);
-    return newRoot;
+    fixHeight(newTree);
+    return newTree;
 }
 
 Tree* rotateLeft(Tree* tree)
 {
-    Tree* newRoot = tree->right;
-    tree->right = newRoot->left;
-    newRoot->left = tree;
+    Tree* newTree = tree->right;
+    tree->right = newTree->left;
+    newTree->left = tree;
     fixHeight(tree);
-    fixHeight(newRoot);
-    return newRoot;
+    fixHeight(newTree);
+    return newTree;
 }
 
 Tree* balance(Tree* tree)
@@ -78,12 +77,13 @@ Tree* createTree(int key)
     tree->right = NULL;
     tree->height = 1;
     tree->key = key;
-    size++;
     return tree;
 }
 
 void deleteTree(Tree* tree)
 {
+    if (!tree)
+        return;
     if (tree->left)
         deleteTree(tree->left);
     if (tree->right)
@@ -91,41 +91,49 @@ void deleteTree(Tree* tree)
     free(tree);
 }
 
-void put(Tree* tree, int key)
+Tree* put(Tree* tree, int key)
 {
     if (key >= tree->key) {
         if (!tree->right)
             tree->right = createTree(key);
         else
-            put(tree->right, key);
+            tree->right = put(tree->right, key);
     } else {
         if (!tree->left)
             tree->left = createTree(key);
         else
-            put(tree->left, key);
+            tree->left = put(tree->left, key);
     }
-    balance(tree);
+    return balance(tree);
 }
 
 int main()
 {
-    Tree* root = createTree(rand());
-    double max1 = 0;
-    for (int i = 0; i < 1000; i++) {
-        put(root, rand());
-        if (i > 100) {
-            double d = getHeight(root) / log2(size);
-            max1 = (d > max1) ? d : max1;
+    // при добавлении случайных чисел усредним полученные значения максимумов
+    double sum = 0;
+    for (int k = 0; k < 100; ++k) {
+        size = 1;
+        Tree* root = createTree(rand());
+        double max1 = 0;
+        for (int i = 0; i < 1000; i++) {
+            root = put(root, rand());
+            size++;
+            if (i > 100) {
+                double d = getHeight(root) / log2(size);
+                max1 = (d > max1) ? d : max1;
+            }
         }
+        sum += max1;
+        deleteTree(root);
     }
-    printf("%lf\n", max1);
-    deleteTree(root);
+    printf("%lf\n", sum / 100);
 
-    size = 0;
-    root = createTree(0);
+    size = 1;
+    Tree* root = createTree(0);
     double max2 = 0;
     for (int i = 0; i < 1000; ++i) {
-        put(root, i + 1);
+        root = put(root, i + 1);
+        size++;
         if (i > 100) {
             double d = getHeight(root) / log2(size);
             max2 = (d > max2) ? d : max2;
