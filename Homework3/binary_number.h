@@ -7,8 +7,7 @@
 int* toBinary(int x);
 void toReverseCode(int* b);
 int firstNonZeroBit(int* b);
-int* sum(int* a, int* b);
 void add(int* a, int* b); // аналог a += b
 int toDecimal(int* b);
-
+int* multiply(int* a, int* b);
 #endif

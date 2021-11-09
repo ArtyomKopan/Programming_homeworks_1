@@ -31,29 +31,17 @@ void toReverseCode(int* b)
         b[i] = 1 - b[i];
 }
 
-int* sum(int* a, int* b)
+int getCarry(const int* a, const int* b)
 {
-    int* result = calloc(sizeof(int), MAX_NUMBER_LENGTH);
-    toReverseCode(a);
-    toReverseCode(b);
     int carry = 0;
     for (int i = MAX_NUMBER_LENGTH - 1; i >= 0; --i) {
         int tempSum = a[i] + b[i] + carry;
-        result[i] = tempSum % 2;
         carry = (tempSum <= 1) ? 0 : 1;
     }
-    if (carry == 1) {
-        for (int i = MAX_NUMBER_LENGTH - 1; i >= 0; --i) {
-            int tempSum = result[i] + carry;
-            result[i] = tempSum % 2;
-            carry = (tempSum <= 1) ? 0 : 1;
-        }
-    }
-    toReverseCode(result);
-    return result;
+    return carry;
 }
 
-void add(int* a, int* b)
+void sum(int* a, int* b)
 {
     int carry = 0;
     for (int i = MAX_NUMBER_LENGTH - 1; i >= 0; --i) {
@@ -61,13 +49,13 @@ void add(int* a, int* b)
         a[i] = tempSum % 2;
         carry = (tempSum <= 1) ? 0 : 1;
     }
-    if (carry == 1) {
-        for (int i = MAX_NUMBER_LENGTH - 1; i >= 0; --i) {
-            int tempSum = a[i] + carry;
-            a[i] = tempSum % 2;
-            carry = (tempSum <= 1) ? 0 : 1;
-        }
-    }
+}
+
+void add(int* a, int* b)
+{
+    sum(a, b);
+    if (getCarry(a, b) == 1)
+        sum(a, toBinary(1));
 }
 
 int toDecimal(int* b)
@@ -79,4 +67,34 @@ int toDecimal(int* b)
     for (int i = firstNonZeroBit(b) + 1; i < MAX_NUMBER_LENGTH; ++i)
         x = 2 * x + b[i];
     return signum * x;
+}
+
+void rotateRight(int* b)
+{
+    for (int i = MAX_NUMBER_LENGTH - 1; i >= 2; --i)
+        b[i] = b[i - 1];
+    b[1] = 0;
+}
+
+void rotateLeft(int* b)
+{
+    for (int i = 1; i < MAX_NUMBER_LENGTH - 1; ++i)
+        b[i] = b[i + 1];
+    b[MAX_NUMBER_LENGTH - 1] = 0;
+}
+
+int* multiply(int* a, int* b)
+{
+    int* result = calloc(MAX_NUMBER_LENGTH, sizeof(int));
+    if (a[0] != b[0])
+        result[0] = 1;
+    a[0] = 0;
+    b[0] = 0;
+    while (firstNonZeroBit(a) != 0) {
+        if (a[MAX_NUMBER_LENGTH - 1] != 0)
+            add(result, b);
+        rotateLeft(b);
+        rotateRight(a);
+    }
+    return result;
 }
