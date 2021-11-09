@@ -54,7 +54,8 @@ void sum(int* a, int* b)
 void add(int* a, int* b)
 {
     sum(a, b);
-    if (getCarry(a, b) == 1)
+    int carry = getCarry(a, b);
+    if (carry == 1)
         sum(a, toBinary(1));
 }
 
