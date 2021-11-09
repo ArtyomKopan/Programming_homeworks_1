@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
     FILE* shopResults = fopen(argv[2], "w");
     FILE* shopBalance = fopen(argv[3], "w");
 
-    Tree* store = createTree(0, 0);
+    Tree* store = NULL;
     int operationsCount = 0;
     fscanf(shopLogs, "%i", &operationsCount);
     for (int k = 0; k < operationsCount; ++k) {
@@ -19,7 +19,10 @@ int main(int argc, char* argv[])
             int count = 0;
             fscanf(shopLogs, "%i", &size);
             fscanf(shopLogs, "%i", &count);
-            store = put(store, size, count);
+            if (!store)
+                store = createTree(size, count);
+            else
+                store = put(store, size, count);
         } else if (strcmp(operation, "GET") == 0) {
             fscanf(shopLogs, "%i", &size);
             fprintf(shopResults, "%i\n", get(store, size));
