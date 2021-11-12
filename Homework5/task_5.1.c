@@ -20,30 +20,31 @@ int main(int argc, char* argv[])
             fscanf(shopLogs, "%i", &size);
             fscanf(shopLogs, "%i", &count);
             if (!store)
-                store = createTree(size, count);
+                store = createTree(wrapInt(size), wrapInt(count));
             else
-                store = put(store, size, count);
+                store = put(store, wrapInt(size), wrapInt(count));
         } else if (strcmp(operation, "GET") == 0) {
             fscanf(shopLogs, "%i", &size);
-            fprintf(shopResults, "%i\n", get(store, size));
+            Value result = get(store, wrapInt(size));
+            fprintf(shopResults, "%i\n", !isNone(result) ? getInt(result) : 0);
         } else {
             fscanf(shopLogs, "%i", &size);
-            int foundSize = getLowerBound(store, size);
-            if (foundSize == 0)
+            Value foundSize = getLowerBound(store, wrapInt(size));
+            if (isNone(foundSize) || equals(foundSize, wrapInt(0)))
                 fprintf(shopResults, "SORRY\n");
             else {
-                fprintf(shopResults, "%i\n", foundSize);
-                store = put(store, foundSize, get(store, foundSize) - 1);
-                if (get(store, foundSize) == 0)
+                fprintf(shopResults, "%i\n", getInt(foundSize));
+                store = put(store, foundSize, wrapInt(getInt(get(store, foundSize)) - 1));
+                if (equals(get(store, foundSize), wrapInt(0)))
                     store = removeKey(store, foundSize);
             }
         }
     }
 
     while (store) {
-        int minimum = getMinimum(store);
-        fprintf(shopBalance, "%i %i\n", minimum, get(store, minimum));
-        store = removeKey(store, minimum);
+        int minimum = getInt(getMinimum(store));
+        fprintf(shopBalance, "%i %i\n", minimum, getInt(get(store, wrapInt(minimum))));
+        store = removeKey(store, wrapInt(minimum));
     }
 
     deleteTree(store);

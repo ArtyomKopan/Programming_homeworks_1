@@ -8,9 +8,9 @@
 typedef struct Tree Tree;
 
 struct Tree {
-    int key; // Value key;
-    int value; // Value value;
-    int height; // высота = число вершин, а не число рёбер!
+    Value key;
+    Value value;
+    int height;
     Tree* left;
     Tree* right;
 };
@@ -19,7 +19,7 @@ struct Tree {
  * Создаёт экземпляр структуры данных
  */
 // Tree* createTree(Comparator comparator);
-Tree* createTree(int key, int value);
+Tree* createTree(Value key, Value value);
 
 /**
  * Уничтожает экземпляр структуры данных. Очистка памяти
@@ -33,48 +33,48 @@ void deleteTree(Tree* tree);
  * Если ключ уже присутствовал в структуре данных,
  * то прошлое значение перезаписывается
  */
-Tree* put(Tree* tree, int key, int value); // void put(Tree* tree, Value key, Value value);
+Tree* put(Tree* tree, Value key, Value value);
 
 /**
  * Удаляет ключ и ассоциированное с ним значение
  * из структуры данных.
  * Если ключ не присутствовал в структуре, то ничего не делает
  */
-Tree* removeKey(Tree* tree, int key); // void removeKey(Tree* tree, Value key);
+Tree* removeKey(Tree* tree, Value key);
 
 /**
  * Возвращает ассоциированное с ключом key значение.
  * Если ключ не присутствовал в структуре, то возвращает
  * значение Value с указанным типом NONE_TYPE
  */
-int get(Tree* tree, int key); // Value get(Tree* tree, Value key);
+Value get(Tree* tree, Value key);
 
 /**
  * Проверяет наличие ключа key в структуре данных
  */
-bool hasKey(Tree* tree, int key); // bool hasKey(Tree* tree, Value key);
+bool hasKey(Tree* tree, Value key);
 
 /**
  * Возвращает наименьший находящийся в структуре ключ,
  * который больше либо равен указанному значению
  */
-int getLowerBound(Tree* tree, int key); // Value getLowerBound(Tree* tree, Value key);
+Value getLowerBound(Tree* tree, Value key);
 
 /**
  * Возвращает наименьший находящийся в структуре ключ,
  * который строго больше указанного значения
  */
-int getUpperBound(Tree* tree, int key); // Value getUpperBound(Tree* tree, Value key);
+Value getUpperBound(Tree* tree, Value key);
 
 /**
  * Возвращает наибольший находящийся в структуре ключ
  */
-int getMaximum(Tree* tree); // Value getMaximum(Tree* tree);
+Value getMaximum(Tree* tree);
 
 /**
  * Возвращает наименьший находящийся в структуре ключ
  */
-int getMinimum(Tree* tree); // Value getMinimum(Tree* tree);
+Value getMinimum(Tree* tree);
 
 /*
  * Iterator - своего рода “указатель” на элементы
