@@ -29,10 +29,10 @@ uint32_t hashInt(int x)
 uint32_t hashDouble(double x)
 {
     uint_fast64_t temp = 0;
-    x *= HASH_POLYNOMIAL_PARAMETER;
-    memcpy(&x, &temp, sizeof(double));
-    int32_t older = temp >> 32;
-    int32_t younger = (temp << 32) >> 32;
+    memcpy(&temp, &x, sizeof(double));
+    temp *= HASH_POLYNOMIAL_PARAMETER;
+    int32_t older = (temp >> 32) % MOD;
+    int32_t younger = ((temp << 32) >> 32) % MOD;
     return (older ^ younger) % MOD;
 }
 
