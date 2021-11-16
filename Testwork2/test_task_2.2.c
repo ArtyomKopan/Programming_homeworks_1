@@ -1,4 +1,3 @@
-#include "mergeSort.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -24,11 +23,18 @@ int main()
         unitedArray[i] = vasyaNotes[i];
     for (int i = 0; i < petyaNotesCount; ++i)
         unitedArray[vasyaNotesCount + i] = petyaNotes[i];
-    sort(unitedArray, vasyaNotesCount + petyaNotesCount);
 
-    printf("Sorted array: ");
-    for (int i = 0; i < vasyaNotesCount + petyaNotesCount; ++i)
-        printf("%i ", unitedArray[i]);
+    int i = 0, j = vasyaNotesCount;
+    while (i < vasyaNotesCount && j < vasyaNotesCount + petyaNotesCount) {
+        if (unitedArray[i] >= unitedArray[j])
+            printf("%i ", unitedArray[i++]);
+        else
+            printf("%i ", unitedArray[j++]);
+    }
+    for (int k = i; k < vasyaNotesCount; ++k)
+        printf("%i ", unitedArray[k]);
+    for (int k = j; k < vasyaNotesCount + petyaNotesCount; ++k)
+        printf("%i ", unitedArray[k]);
 
     free(vasyaNotes);
     free(petyaNotes);
