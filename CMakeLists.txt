@@ -18,7 +18,13 @@ add_executable(task_1.2 Homework1/task_2.c)
 
 add_executable(task_1.3 Homework1/task_3.c)
 
+<<<<<<< HEAD
 add_executable(task_2.2 Homework2/task_2.2.c Homework2/list.c)
+=======
+add_executable(task_3.3 Homework3/task_3.3.c Homework3/binary_number.c)
+
+add_executable(task_3.2 Homework3/task_3.2.c)
+>>>>>>> e52e576872b12fd87f0359d8c8612cd878447776
 
 add_executable(task_2.1 Homework2/task_2.1.c Homework2/dictionary.c)
 
@@ -26,3 +32,6 @@ add_executable(test_task_1 Testwork1/test_task_1.c Testwork1/vector.c)
 
 add_executable(test_task_2 Testwork1/test_task_2.c Testwork1/list.c)
 
+add_executable(task_3.1 Homework3/task_3.1.c Homework3/binary_number.c)
+
+add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
