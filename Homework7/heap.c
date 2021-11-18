@@ -73,7 +73,8 @@ Heap* createNewHeap()
     return heap;
 }
 
-void deleteHeap(Heap* heap) {
+void deleteHeap(Heap* heap)
+{
     free(heap);
 }
 
