@@ -1,42 +1,42 @@
 #include "mergeSort.h"
 #include <stdlib.h>
 
-void merge(int* array, int left, int right)
+void merge(int* array, int leftIndex, int rightIndex)
 {
-    int middle = (left + right) / 2;
-    int* result = malloc((right - left + 1) * sizeof(int));
-    int iterator1 = 0;
-    int iterator2 = 0;
-    while (left + iterator1 < middle && middle + iterator2 < right) {
-        if (array[left + iterator1] <= array[middle + iterator2]) {
-            result[iterator1 + iterator2] = array[left + iterator1];
-            ++iterator1;
+    int middleIndex = (leftIndex + rightIndex) / 2;
+    int* sortedArray = malloc((rightIndex - leftIndex + 1) * sizeof(int));
+    int leftIterator = 0;
+    int rightIterator = 0;
+    while (leftIndex + leftIterator < middleIndex && middleIndex + rightIterator < rightIndex) {
+        if (array[leftIndex + leftIterator] <= array[middleIndex + rightIterator]) {
+            sortedArray[leftIterator + rightIterator] = array[leftIndex + leftIterator];
+            leftIterator++;
         } else {
-            result[iterator1 + iterator2] = array[middle + iterator2];
-            ++iterator2;
+            sortedArray[leftIterator + rightIterator] = array[middleIndex + rightIterator];
+            rightIterator++;
         }
     }
-    while (left + iterator1 < middle) {
-        result[iterator1 + iterator2] = array[left + iterator1];
-        ++iterator1;
+    while (leftIndex + leftIterator < middleIndex) {
+        sortedArray[leftIterator + rightIterator] = array[leftIndex + leftIterator];
+        leftIterator++;
     }
-    while (middle + iterator2 < right) {
-        result[iterator1 + iterator2] = array[middle + iterator2];
-        ++iterator2;
+    while (middleIndex + rightIterator < rightIndex) {
+        sortedArray[leftIterator + rightIterator] = array[middleIndex + rightIterator];
+        rightIterator++;
     }
-    for (int i = 0; i < right - left; ++i)
-        array[left + i] = result[i];
+    for (int i = 0; i < rightIndex - leftIndex; ++i)
+        array[leftIndex + i] = sortedArray[i];
 
-    free(result);
+    free(sortedArray);
 }
 
-void mergeSort(int* array, int left, int right)
+void mergeSort(int* array, int leftIndex, int rightIndex)
 {
-    if (left + 1 < right) {
-        int middle = (left + right) / 2;
-        mergeSort(array, left, middle);
-        mergeSort(array, middle, right);
-        merge(array, left, right);
+    if (leftIndex + 1 < rightIndex) {
+        int middleIndex = (leftIndex + rightIndex) / 2;
+        mergeSort(array, leftIndex, middleIndex);
+        mergeSort(array, middleIndex, rightIndex);
+        merge(array, leftIndex, rightIndex);
     }
 }
 
