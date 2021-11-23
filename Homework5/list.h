@@ -2,9 +2,9 @@
 #ifndef HOMEWORK2_LIST_H
 #define HOMEWORK2_LIST_H
 
+#include "values.h"
 #include <bits/types/FILE.h>
 #include <stdbool.h>
-#include "values.h"
 
 typedef struct ListElement {
     Value data;

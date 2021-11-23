@@ -76,6 +76,7 @@ void deleteList(List* list)
     free(list);
 }
 
-int getListSize(List* list) {
+int getListSize(List* list)
+{
     return list->listSize;
 }
