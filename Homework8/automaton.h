@@ -2,7 +2,6 @@
 #ifndef HOMEWORK8_AUTOMATON_H
 #define HOMEWORK8_AUTOMATON_H
 
-#include "dictionary.h"
 #include "values.h"
 #include <stdbool.h>
 
