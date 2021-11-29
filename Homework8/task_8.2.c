@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[])
 {
-    /*
+
     if (argc < 2) {
         printf("ERROR! Automaton description not found!");
         return 0;
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
         fscanf(automatonDescription, "%i %i %s", &from, &to, type);
         if (strcmp(type, "char") == 0) {
             char transitionValue = '\0';
-            fscanf(automatonDescription, "%c", &transitionValue);
+            fscanf(automatonDescription, " %c", &transitionValue);
             transitions[i] = createTransition(from, to, wrapChar(transitionValue));
         } else if (strcmp(type, "string") == 0) {
             char transitionValue[8];
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     for (int i = 0; i < acceptStatesCount; ++i)
         fscanf(automatonDescription, "%i", &acceptStates[i]);
 
-    */
+    /*
     int transitionsCount = 16;
     int acceptStatesCount = 3;
     int* acceptStates = malloc(acceptStatesCount * sizeof(int));
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     transitions[13] = createTransition(5, 6, wrapChar('-'));
     transitions[14] = createTransition(6, 7, wrapString("digit"));
     transitions[15] = createTransition(7, 7, wrapString("digit"));
-
+    */
     Automaton* automaton = createAutomaton(transitionsCount, acceptStatesCount, transitions, acceptStates);
 
     char* word = malloc(1024 * sizeof(char));
