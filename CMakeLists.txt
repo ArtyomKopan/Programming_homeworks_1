@@ -33,3 +33,5 @@ add_executable(task_3.1 Homework3/task_3.1.c Homework3/binary_number.c)
 add_executable(test_task_2.2 Testwork2/test_task_2.2.c)
 
 add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
+
+add_executable(retest_task_1.3 Retest1/retest_task_1.3.c)
