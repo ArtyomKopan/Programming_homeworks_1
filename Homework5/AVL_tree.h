@@ -2,6 +2,7 @@
 #ifndef HOMEWORK5_AVL_TREE_H
 #define HOMEWORK5_AVL_TREE_H
 
+#include "list.h"
 #include "values.h"
 #include <stdbool.h>
 
@@ -13,13 +14,13 @@ struct Tree {
     int height;
     Tree* left;
     Tree* right;
+    Comparator comparator;
 };
 
 /**
  * Создаёт экземпляр структуры данных
  */
-// Tree* createTree(Comparator comparator);
-Tree* createTree(Value key, Value value);
+Tree* createTree(Value key, Value value, Comparator comparator);
 
 /**
  * Уничтожает экземпляр структуры данных. Очистка памяти
@@ -102,4 +103,33 @@ Value getMinimum(Tree* tree);
  */
 // bool hasElement(TreeIterator* iterator);
 
+/**
+ * Удаляет ключи в указанном диапазоне
+ */
+Tree* removeKeys(Tree* tree, Value begin, Value end);
+
+/**
+ * Возвращает список MapEntry с ключами в указанном диапазоне
+ */
+List getAll(Tree* map, Value begin, Value end);
+
+/**
+ * Оставляет в структуре только ключи строго меньшие value,
+ * а остальные значения переносит в новую структуру данных.
+ * Возвращает указатель на структуру данных, содрержащую ключи
+ * большие либо равные заданному
+ */
+Tree* split(Tree* tree, Value value);
+
+/**
+ * Переносит все элементы из структуры another в структуру map.
+ * Пусть map хранит N ключей, а another - M.
+ * Если ключи в another строго больше/строго меньше ключей в map, то
+ * операция выполняется за O(log(N + M)).
+ * В противном случае, время работы
+ * увеличивается до O(min(N, M) * log(N + M))
+ */
+void join(Tree* tree, Tree* another);
+
+Tree* changeKey(Tree* tree, Value oldKey, Value newKey);
 #endif

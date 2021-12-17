@@ -26,6 +26,11 @@ typedef struct Value {
 
 typedef int (*Comparator)(Value, Value);
 
+// int comparator(v1, v2):
+//      v1 == v2 ==> return 0
+//      v1 < v2 ==> return -1
+//      v1 > v2 ==> return 1
+
 Value wrapInt(int value);
 Value wrapDouble(double value);
 Value wrapString(char* value);

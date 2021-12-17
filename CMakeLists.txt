@@ -28,9 +28,14 @@ add_executable(test_task_1 Testwork1/test_task_1.c Testwork1/vector.c)
 
 add_executable(test_task_2 Testwork1/test_task_2.c Testwork1/list.c)
 
+add_executable(task_5.3 Homework5/task_5.3.c)
+
+target_link_libraries(task_5.3 m)
+
 add_executable(task_3.1 Homework3/task_3.1.c Homework3/binary_number.c)
 
 add_executable(task_5.1 Homework5/task_5.1.c Homework5/AVL_tree.c Homework5/values.c)
 
 add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
 
+add_executable(retest_1.3 Retest1/retest_task_1.3.c)s
