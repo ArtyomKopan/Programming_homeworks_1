@@ -38,4 +38,5 @@ add_executable(task_5.1 Homework5/task_5.1.c Homework5/AVL_tree.c Homework5/valu
 
 add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
 
-add_executable(retest_1.3 Retest1/retest_task_1.3.c)s
+add_executable(retest_1.3 Retest1/retest_task_1.3.c)
+
