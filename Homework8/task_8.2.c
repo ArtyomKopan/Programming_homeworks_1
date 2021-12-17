@@ -1,5 +1,5 @@
+#include "../library/values/values.h"
 #include "automaton.h"
-#include "values.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     }
     int transitionsCount = 0;
     fscanf(automatonDescription, "%i", &transitionsCount);
-    Transition** transitions = malloc(transitionsCount * sizeof(Transition));
+    Transition** transitions = malloc(transitionsCount * sizeof(Transition*));
     for (int i = 0; i < transitionsCount; ++i) {
         int from = 0;
         int to = 0;
@@ -44,45 +44,21 @@ int main(int argc, char* argv[])
             return 0;
         }
     }
+    int startState = 0;
+    fscanf(automatonDescription, "%i", &startState);
     int acceptStatesCount = 0;
     fscanf(automatonDescription, "%i", &acceptStatesCount);
     int* acceptStates = malloc(acceptStatesCount * sizeof(int));
     for (int i = 0; i < acceptStatesCount; ++i)
         fscanf(automatonDescription, "%i", &acceptStates[i]);
 
-    /*
-    int transitionsCount = 16;
-    int acceptStatesCount = 3;
-    int* acceptStates = malloc(acceptStatesCount * sizeof(int));
-    acceptStates[0] = 2;
-    acceptStates[1] = 4;
-    acceptStates[2] = 7;
-
-    Transition** transitions = malloc(transitionsCount * sizeof(Transition));
-    transitions[0] = createTransition(0, 2, wrapString("digit"));
-    transitions[1] = createTransition(0, 1, wrapChar('+'));
-    transitions[2] = createTransition(0, 1, wrapChar('-'));
-    transitions[3] = createTransition(0, 3, wrapChar('.'));
-    transitions[4] = createTransition(1, 2, wrapString("digit"));
-    transitions[5] = createTransition(2, 2, wrapString("digit"));
-    transitions[6] = createTransition(2, 3, wrapChar('.'));
-    transitions[7] = createTransition(2, 5, wrapChar('E'));
-    transitions[8] = createTransition(3, 4, wrapString("digit"));
-    transitions[9] = createTransition(4, 4, wrapString("digit"));
-    transitions[10] = createTransition(4, 5, wrapChar('E'));
-    transitions[11] = createTransition(5, 7, wrapString("digit"));
-    transitions[12] = createTransition(5, 6, wrapChar('+'));
-    transitions[13] = createTransition(5, 6, wrapChar('-'));
-    transitions[14] = createTransition(6, 7, wrapString("digit"));
-    transitions[15] = createTransition(7, 7, wrapString("digit"));
-    */
-    Automaton* automaton = createAutomaton(transitionsCount, acceptStatesCount, transitions, acceptStates);
+    Automaton* automaton = createAutomaton(transitionsCount, acceptStatesCount, transitions, acceptStates, startState);
 
     char* word = malloc(1024 * sizeof(char));
     printf("Enter the word to check: ");
     scanf("%s", word);
 
-    if (isCorrect(automaton, word, 0))
+    if (isCorrect(automaton, word))
         printf("This is number!");
     else
         printf("This is not number!");

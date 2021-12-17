@@ -1,15 +1,30 @@
 #include "automaton.h"
-#include "list.h"
+#include "../library/list/list.h"
+#include "../library/values/values.h"
 #include "string.h"
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 
-Automaton* createAutomaton(int transitionsCount, int acceptStatesCount, Transition** transitions, int* acceptStates)
+struct Transition {
+    int from;
+    int to;
+    Value transitionValue;
+};
+
+struct Automaton {
+    int transitionsCount;
+    int acceptStatesCount;
+    Transition** transitions;
+    int* acceptStates;
+    int startState;
+};
+
+Automaton* createAutomaton(int transitionsCount, int acceptStatesCount, Transition** transitions, int* acceptStates, int startState)
 {
     Automaton* automaton = malloc(sizeof(Automaton));
     automaton->transitionsCount = transitionsCount;
     automaton->acceptStatesCount = acceptStatesCount;
+    automaton->startState = startState;
     automaton->transitions = malloc(transitionsCount * sizeof(Transition));
     automaton->acceptStates = malloc(acceptStatesCount * sizeof(int));
     for (int i = 0; i < transitionsCount; ++i)
@@ -55,22 +70,27 @@ bool isDigit(char symbol)
     return symbol >= '0' && symbol <= '9';
 }
 
-bool isCorrect(Automaton* automaton, char* word, int startState)
+bool isCorrectTransition(Value transitionValue, char* pointer)
+{
+    return (transitionValue.type == CHAR_TYPE && *pointer == getChar(transitionValue)) || (transitionValue.type == STRING_TYPE && strcmp(getString(transitionValue), "digit") == 0 && isDigit(*pointer)) || (transitionValue.type == STRING_TYPE && strcmp(getString(transitionValue), "letter") == 0 && isLetter(*pointer));
+}
+
+bool isCorrect(Automaton* automaton, char* word)
 {
     if (strlen(word) == 0)
         return false;
-    int currentState = startState;
+    int currentState = automaton->startState;
     for (char* pointer = word; *pointer != '\0'; pointer++) {
         bool isMoved = false;
         List* possibleTransitions = makeNewList();
         for (int i = 0; i < automaton->transitionsCount; ++i)
             if (automaton->transitions[i]->from == currentState)
-                addListElement(possibleTransitions, wrapPointer(automaton->transitions[i]), getListSize(possibleTransitions));
+                addListElement(possibleTransitions, wrapPointer(automaton->transitions[i]),
+                    getListSize(possibleTransitions));
         for (ListElement* element = possibleTransitions->head; element; element = element->next) {
             Transition* transition = (Transition*)getPointer(element->value);
             Value transitionValue = transition->transitionValue;
-            if (
-                (transitionValue.type == CHAR_TYPE && *pointer == getChar(transitionValue)) || (transitionValue.type == STRING_TYPE && strcmp(getString(transitionValue), "digit") == 0 && isDigit(*pointer)) || (transitionValue.type == STRING_TYPE && strcmp(getString(transitionValue), "letter") == 0 && isLetter(*pointer))) {
+            if (isCorrectTransition(transitionValue, pointer)) {
                 currentState = transition->to;
                 isMoved = true;
                 break;
@@ -80,8 +100,5 @@ bool isCorrect(Automaton* automaton, char* word, int startState)
             return false;
         deleteList(possibleTransitions);
     }
-    if (isAccept(automaton, currentState))
-        return true;
-    else
-        return false;
+    return isAccept(automaton, currentState);
 }
