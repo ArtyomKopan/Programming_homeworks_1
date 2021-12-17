@@ -43,3 +43,6 @@ add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
 add_executable(task_8.2 Homework8/task_8.2.c Homework8/automaton.c Homework8/automaton.h)
 
 target_link_libraries(task_8.2 library)
+
+add_executable(retest_1.3 Retest1/retest_task_1.3.c)
+
