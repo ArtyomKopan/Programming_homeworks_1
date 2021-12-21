@@ -83,8 +83,10 @@ int main()
             count = 1;
         }
     }
-    Pair pair = { array[arraySize - 1], count };
-    addListElement(counts, wrapPointer(&pair), getListSize(counts));
+    Pair* pair = malloc(sizeof(Pair));
+    pair->first = array[arraySize - 1];
+    pair->second = count;
+    addListElement(counts, wrapPointer(pair), getListSize(counts));
     printf("\n");
     for (ListElement* current = counts->head; current; current = current->next) {
         int number = ((Pair*)getPointer(current->value))->first;
@@ -94,6 +96,8 @@ int main()
 
     free(list);
     free(array);
+    for (ListElement* current = counts->head; current; current = current->next)
+        free(current);
     free(counts);
     return 0;
 }
