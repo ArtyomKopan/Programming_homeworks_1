@@ -4,8 +4,12 @@ project(spbu_c_homeworks C)
 set(CMAKE_C_STANDARD 11)
 
 set(SOURCE_LIB
-    library/commonUtils/numericOperations.c
-)
+
+        library/commonUtils/numericOperations.c
+        library/list/list.c
+        library/values/values.c
+        )
+
 add_library(library ${SOURCE_LIB})
 
 add_executable(task_1.5 Homework1/task_5.c)
@@ -36,4 +40,9 @@ add_executable(task_3.1 Homework3/task_3.1.c Homework3/binary_number.c)
 
 add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
 
+add_executable(task_8.2 Homework8/task_8.2.c Homework8/automaton.c Homework8/automaton.h)
+
+target_link_libraries(task_8.2 library)
+
 add_executable(retest_1.3 Retest1/retest_task_1.3.c)
+
