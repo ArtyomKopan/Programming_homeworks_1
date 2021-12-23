@@ -7,67 +7,72 @@
 #include <string.h>
 
 #define HASH_POLYNOMIAL_PARAMETER 239
-#define MOD 7537
+#define HASH_MAP_START_SIZE 256
+#define HASH_MAP_LOAD_BORDER 0.8
 
-int power(int a, int n)
+int power(int a, int n, int mod)
 {
     if (n == 0)
         return 1;
     if (n == 1)
         return a;
-    if (n % 2 == 0)
-        return power(a, n / 2) * power(a, n / 2);
-    else
-        return a * power(a, n - 1);
+    if (n % 2 == 0) {
+        int temp = power(a, n / 2, mod) % mod;
+        return (temp * temp) % mod;
+    } else
+        return (a * (power(a, n - 1, mod) % mod)) % mod;
 }
 
-uint32_t hashInt(int x)
+uint32_t hashInt(int x, int mod)
 {
-    return x % MOD;
+    return x % mod;
 }
 
-uint32_t hashDouble(double x)
+uint32_t hashDouble(double x, int mod)
 {
-    uint32_t h = 0;
-    memcpy(&x, &h, sizeof(x));
-    return h % MOD;
+    uint_fast64_t temp = 0;
+    memcpy(&temp, &x, sizeof(double));
+    temp *= HASH_POLYNOMIAL_PARAMETER;
+    int32_t older = (temp >> 32) % mod;
+    int32_t younger = ((temp << 32) >> 32) % mod;
+    return (older ^ younger) % mod;
 }
 
-uint32_t hashString(char* string)
+uint32_t hashString(char* string, int mod)
 {
     uint32_t hash = 0;
     int length = strlen(string);
     for (int i = 0; i < length; ++i)
-        hash += (string[i] * power(HASH_POLYNOMIAL_PARAMETER, length - i)) % MOD;
-    return hash % MOD;
+        // hash += (string[i] * power(HASH_POLYNOMIAL_PARAMETER, length - i, mod)) % mod;
+        hash = (hash * HASH_POLYNOMIAL_PARAMETER + string[i]) % mod;
+    return hash % mod;
 }
 
-uint32_t hashPair(Pair* pair)
-{
-    return (hash(pair->first) + hash(pair->second)) % MOD;
-}
-
-uint32_t hashList(Value pointer)
+uint32_t hashList(Value pointer, int mod)
 {
     List* list = getPointer(pointer);
     uint32_t listHash = 0;
+    int multiplayer = 1;
     for (int i = 0; i < getListSize(list); ++i) {
         Value key = getListElement(list, i)->key;
         Value value = getListElement(list, i)->value;
-        listHash += ((hash(key) + hash(value)) % MOD) * power(HASH_POLYNOMIAL_PARAMETER, getListSize(list) - i) % MOD;
+        // listHash += ((hash(key, mod) + HASH_POLYNOMIAL_PARAMETER * hash(value, mod)) % mod) * power(HASH_POLYNOMIAL_PARAMETER, getListSize(list) - i, mod) % mod;
+        listHash += (((hash(key, mod) + HASH_POLYNOMIAL_PARAMETER * hash(value, mod)) % mod) * multiplayer) % mod;
+        multiplayer *= HASH_POLYNOMIAL_PARAMETER;
+        multiplayer %= mod;
     }
-    return listHash % MOD;
+    return listHash % mod;
 }
 
-uint32_t hash(Value x)
+uint32_t hash(Value x, int mod)
 {
     switch (x.type) {
     case INT_TYPE:
-        return hashInt(getInt(x));
+        return hashInt(getInt(x), mod);
     case DOUBLE_TYPE:
-        return hashDouble(getDouble(x));
+        return hashDouble(getDouble(x), mod);
     case STRING_TYPE:
-        return hashString(getString(x));
+        return hashString(getString(x), mod);
     }
 }
 
@@ -84,41 +89,66 @@ HashMapElement* makeNewHashMapElement()
     return element;
 }
 
-HashMap* createHashMap(HashFunction hashFunction)
+HashMap* createHashMap(HashFunction hashFunction, Comparator comparator)
 {
     HashMap* map = malloc(sizeof(HashMap));
-    map->hashMapSize = MOD;
-    map->hashTable = malloc(MOD * sizeof(HashMapElement*));
+    map->hashMapSize = HASH_MAP_START_SIZE;
+    map->hashTable = malloc(HASH_MAP_START_SIZE * sizeof(HashMapElement*));
     for (int i = 0; i < map->hashMapSize; ++i)
         map->hashTable[i] = makeNewHashMapElement();
     map->hashFunction = hashFunction;
+    map->comparator = comparator;
     return map;
+}
+
+double getLoadFactor(HashMap* map)
+{
+    return (double)map->countFilledBuckets / map->hashMapSize;
+}
+
+void resizeHashMap(HashMap* map)
+{
+    map->hashTable = realloc(map->hashTable, 2 * map->hashMapSize * sizeof(HashMapElement*));
+    for (int i = map->hashMapSize; i < 2 * map->hashMapSize; ++i)
+        map->hashTable[i] = makeNewHashMapElement();
+    map->hashMapSize *= 2;
 }
 
 void deleteHashMap(HashMap* map)
 {
-    for (int i = 0; i < map->hashMapSize; ++i)
+    for (int i = 0; i < map->hashMapSize; ++i) {
+        ListElement* next = NULL;
+        for (ListElement* current = map->hashTable[i]->list->head; current; current = next) {
+            next = current->next;
+            free(current);
+        }
+        free(map->hashTable[i]->list);
         free(map->hashTable[i]);
+    }
     free(map);
 }
 
 void putToHashMap(HashMap* map, Value key, Value value)
 {
-    uint32_t hashElement = map->hashFunction(key);
+    if (getLoadFactor(map) >= HASH_MAP_LOAD_BORDER)
+        resizeHashMap(map);
+    uint32_t hashElement = map->hashFunction(key, map->hashMapSize);
     map->hashTable[hashElement]->hash = hashElement;
     addListElement(map->hashTable[hashElement]->list, key, value, map->hashTable[hashElement]->list->listSize);
+    if (getListSize(map->hashTable[hashElement]->list) == 1)
+        map->countFilledBuckets++;
 }
 
 List* getHashMapElements(HashMap* map, Value key)
 {
     List* list = makeNewList();
-    uint32_t hashElement = map->hashFunction(key);
+    uint32_t hashElement = map->hashFunction(key, map->hashMapSize);
     for (ListElement* current = map->hashTable[hashElement]->list->head; current; current = current->next) {
         if (key.type == POINTER_TYPE) {
-            if (map->hashFunction(key) == map->hashFunction(current->key))
+            if (map->hashFunction(key, map->hashMapSize) == map->hashFunction(current->key, map->hashMapSize))
                 addListElement(list, current->key, current->value, getListSize(list));
         } else {
-            if (equals(key, current->key))
+            if (map->comparator(key, current->key) == 0)
                 addListElement(list, current->key, current->value, getListSize(list));
         }
     }
@@ -127,9 +157,9 @@ List* getHashMapElements(HashMap* map, Value key)
 
 bool hasKey(HashMap* map, Value key)
 {
-    uint32_t hashElement = map->hashFunction(key);
+    uint32_t hashElement = map->hashFunction(key, map->hashMapSize);
     for (int i = 0; i < getListSize(map->hashTable[hashElement]->list); ++i)
-        if (equals(key, getListElement(map->hashTable[hashElement]->list, i)->key))
+        if (map->comparator(key, getListElement(map->hashTable[hashElement]->list, i)->key) == 0)
             return true;
     return false;
 }
@@ -138,8 +168,10 @@ void removeKey(HashMap* map, Value key)
 {
     if (!hasKey(map, key))
         return;
-    uint32_t hashElement = map->hashFunction(key);
+    uint32_t hashElement = map->hashFunction(key, map->hashMapSize);
     for (int i = getListSize(map->hashTable[hashElement]->list) - 1; i >= 0; --i)
-        if (equals(key, getListElement(map->hashTable[hashElement]->list, i)->key))
+        if (map->comparator(key, getListElement(map->hashTable[hashElement]->list, i)->key) == 0) {
             deleteListElement(map->hashTable[hashElement]->list, i);
+            return;
+        }
 }

@@ -12,10 +12,9 @@ List* makeNewList()
     return list;
 }
 
-ListElement* makeNewListElement(Value key, Value value)
+ListElement* makeNewListElement(Value value)
 {
     ListElement* element = malloc(sizeof(ListElement));
-    element->key = key;
     element->value = value;
     element->previous = NULL;
     element->next = NULL;
@@ -32,24 +31,11 @@ ListElement* getListElement(List* list, int position)
     return element;
 }
 
-ListElement* getListElementByKey(List* list, Value key)
+void addListElement(List* list, Value value, int position)
 {
-    for (ListElement* current = list->head; current; current = current->next)
-        if (equals(current->key, key))
-            return current;
-    return NULL;
-}
-
-void addListElement(List* list, Value key, Value value, int position)
-{
-    ListElement* elementWithThisKey = getListElementByKey(list, key);
-    if (elementWithThisKey) {
-        elementWithThisKey->value = value;
-        return;
-    }
     if (position < 0 || position > list->listSize)
         return;
-    ListElement* element = makeNewListElement(key, value);
+    ListElement* element = makeNewListElement(value);
     element->previous = getListElement(list, position - 1);
     element->next = element->previous ? element->previous->next : list->head;
     if (element->next)
