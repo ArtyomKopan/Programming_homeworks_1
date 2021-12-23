@@ -7,7 +7,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef uint32_t (*HashFunction)(Value);
+typedef uint32_t (*HashFunction)(Value, int);
+typedef int (*Comparator)(Value, Value);
 
 typedef struct Pair {
     Value first;
@@ -22,10 +23,12 @@ typedef struct HashMapElement {
 typedef struct HashMap {
     HashMapElement** hashTable;
     HashFunction hashFunction;
+    Comparator comparator;
     int hashMapSize;
+    int countFilledBuckets;
 } HashMap;
 
-HashMap* createHashMap(HashFunction hashFunction);
+HashMap* createHashMap(HashFunction hashFunction, Comparator comparator);
 
 void deleteHashMap(HashMap* map);
 
@@ -39,7 +42,7 @@ void removeKey(HashMap* map, Value key);
 
 int getHashMapSize(HashMap* map);
 
-uint32_t hash(Value x);
-uint32_t hashList(Value pointer);
+uint32_t hash(Value x, int mod);
+uint32_t hashList(Value pointer, int mod);
 
 #endif
