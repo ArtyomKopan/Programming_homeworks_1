@@ -87,9 +87,12 @@ bool hasKey(Tree* tree, Value key)
 {
     if (!tree)
         return false;
-    if (tree->comparator(tree->key, key) == 0)
+    if (tree->comparator(key, tree->key) == 0)
         return true;
-    return hasKey(tree->left, key) || hasKey(tree->right, key);
+    else if (tree->comparator(key, tree->key) < 0)
+        return hasKey(tree->left, key);
+    else
+        return hasKey(tree->right, key);
 }
 
 Tree* put(Tree* tree, Value key, Value value)
@@ -181,20 +184,24 @@ Value getLowerBound(Tree* tree, Value key)
         return wrapNone();
     if (tree->comparator(tree->key, key) == 0)
         return tree->key;
-    else if (tree->comparator(tree->key, key) == 1)
+    else if (tree->comparator(tree->key, key) < 0)
         return getLowerBound(tree->right, key);
-    else
-        return !isNone(getLowerBound(tree->left, key)) ? getLowerBound(tree->left, key) : tree->key;
+    else {
+        Value foundValue = getLowerBound(tree->left, key);
+        return !isNone(foundValue) ? foundValue : tree->key;
+    }
 }
 
 Value getUpperBound(Tree* tree, Value key)
 {
     if (!tree)
         return wrapNone();
-    if (tree->comparator(tree->key, key) == 1 || tree->comparator(tree->key, key) == 0)
+    if (tree->comparator(tree->key, key) <= 0)
         return getUpperBound(tree->right, key);
-    else
-        return !isNone(getUpperBound(tree->left, key)) ? getUpperBound(tree->left, key) : tree->key;
+    else {
+        Value foundValue = getUpperBound(tree->left, key);
+        return !isNone(foundValue) ? foundValue : tree->key;
+    }
 }
 
 Tree* changeKey(Tree* tree, Value oldKey, Value newKey)
