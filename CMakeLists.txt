@@ -34,6 +34,8 @@ add_executable(test_task_1 Testwork1/test_task_1.c Testwork1/vector.c)
 
 add_executable(test_task_2 Testwork1/test_task_2.c Testwork1/list.c)
 
+add_executable(task_4.1 Homework4/task_4.1.c Homework4/mergeSort.c)
+
 add_executable(task_5.3 Homework5/task_5.3.c)
 
 target_link_libraries(task_5.3 m)
