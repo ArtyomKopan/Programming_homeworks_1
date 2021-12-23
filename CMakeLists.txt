@@ -22,6 +22,8 @@ add_executable(task_1.2 Homework1/task_2.c)
 
 add_executable(task_1.3 Homework1/task_3.c)
 
+add_executable(task_2.2 Homework2/task_2.2.c Homework2/list.c)
+
 add_executable(task_3.3 Homework3/task_3.3.c Homework3/binary_number.c)
 
 add_executable(task_3.2 Homework3/task_3.2.c)
