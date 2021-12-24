@@ -75,6 +75,7 @@ Heap* createNewHeap()
 
 void deleteHeap(Heap* heap)
 {
+    free(heap->heap);
     free(heap);
 }
 
