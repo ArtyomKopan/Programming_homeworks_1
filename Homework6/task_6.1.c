@@ -104,9 +104,15 @@ int main(int argc, char* argv[])
                 fscanf(inputFile, "%s %i", star, &azimuth);
                 addListElement(starList, wrapString(star), wrapInt(azimuth), getListSize(starList));
             }
-            List* foundElements = getHashMapElements(starMap2, wrapPointer(starList));
+            /*List* foundElements = getHashMapElements(starMap2, wrapPointer(starList));
             if (getListSize(foundElements) > 0)
                 fprintf(outputFile, "%s\n", getString(foundElements->head->value));
+            else
+                fprintf(outputFile, "NOT FOUND\n");
+                */
+            Value foundElement = getHashMapElement(starMap2, wrapPointer(starList));
+            if (!isNone(foundElement))
+                fprintf(outputFile, "%s\n", getString(foundElement));
             else
                 fprintf(outputFile, "NOT FOUND\n");
         } else if (strcmp(operation, "UNREGISTER") == 0 || strcmp(operation, "unregister") == 0) {
