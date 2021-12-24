@@ -24,6 +24,10 @@ bool isSymmetricList(List* list)
 int main(int argc, char* argv[])
 {
     FILE* inputFile = fopen(argv[1], "r");
+    if (!inputFile) {
+        printf("Input file open error!");
+        return 0;
+    }
     List* list = makeNewList();
     while (!feof(inputFile)) {
         int x = 0;
