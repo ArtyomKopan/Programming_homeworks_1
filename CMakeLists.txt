@@ -58,6 +58,5 @@ add_executable(retest_1.3 Retest1/retest_task_1.3.c)
 
 add_executable(final_task_2 Final/final_task_2.c)
 
-add_executable(retest_2.2 Retest2/retest_2.2.c)
-target_link_libraries(retest_2.2 library)
-
+add_executable(retest_2.5 Retest2/retest_2.5.c)
+target_link_libraries(retest_2.5 library)
