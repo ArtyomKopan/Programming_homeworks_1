@@ -48,6 +48,8 @@ add_executable(task_5.1 Homework5/task_5.1.c Homework5/AVL_tree.c Homework5/valu
 
 add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
 
+add_executable(task_7.1 Homework7/task_7.1.c Homework7/heap.c)
+
 add_executable(task_8.2 Homework8/task_8.2.c Homework8/automaton.c Homework8/automaton.h)
 
 target_link_libraries(task_8.2 library)
@@ -58,3 +60,4 @@ add_executable(final_task_2 Final/final_task_2.c)
 
 add_executable(retest_2.2 Retest2/retest_2.2.c)
 target_link_libraries(retest_2.2 library)
+
