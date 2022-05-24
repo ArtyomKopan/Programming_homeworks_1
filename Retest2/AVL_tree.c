@@ -1,6 +1,6 @@
 #include "AVL_tree.h"
-#include "list.h"
-#include "values.h"
+#include "../library/list/list.h"
+#include "../library/values/values.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,10 +78,6 @@ void deleteTree(Tree* tree)
 {
     if (!tree)
         return;
-    if (tree->left)
-        deleteTree(tree->left);
-    if (tree->right)
-        deleteTree(tree->right);
     deleteTree(tree->left);
     deleteTree(tree->right);
     free(tree);
@@ -219,4 +215,9 @@ Tree* changeKey(Tree* tree, Value oldKey, Value newKey)
     else
         tree->left = changeKey(tree->left, oldKey, newKey);
     return balance(tree);
+}
+
+bool isEmpty(Tree* tree)
+{
+    return !tree || tree->height == 0;
 }

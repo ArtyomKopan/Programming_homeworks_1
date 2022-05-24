@@ -62,7 +62,7 @@ Tree* balance(Tree* tree)
     return tree;
 }
 
-Tree* createTree(Value key, Value value, Comparator comparator)
+Tree* createTree(Value key, Value value)
 {
     Tree* tree = malloc(sizeof(Tree));
     tree->left = NULL;
@@ -70,7 +70,6 @@ Tree* createTree(Value key, Value value, Comparator comparator)
     tree->height = 1;
     tree->key = key;
     tree->value = value;
-    tree->comparator = comparator;
     return tree;
 }
 
@@ -82,65 +81,60 @@ void deleteTree(Tree* tree)
         deleteTree(tree->left);
     if (tree->right)
         deleteTree(tree->right);
-    deleteTree(tree->left);
-    deleteTree(tree->right);
     free(tree);
 }
 
-bool hasKey(Tree* tree, Value key)
+bool hasTreeElementKey(Tree* tree, Value key)
 {
     if (!tree)
         return false;
-    if (tree->comparator(key, tree->key) == 0)
+    if (equals(tree->key, key))
         return true;
-    else if (tree->comparator(key, tree->key) < 0)
-        return hasKey(tree->left, key);
-    else
-        return hasKey(tree->right, key);
+    return hasTreeElementKey(tree->left, key) || hasTreeElementKey(tree->right, key);
 }
 
-Tree* put(Tree* tree, Value key, Value value)
+Tree* putToTree(Tree* tree, Value key, Value value)
 {
-    if (tree->comparator(tree->key, key) == 0)
+    if (equals(tree->key, key))
         tree->value = value;
-    else if (tree->comparator(key, tree->key) > 0) {
+    else if (compare(key, tree->key) > 0) {
         if (!tree->right)
-            tree->right = createTree(key, value, tree->comparator);
+            tree->right = createTree(key, value);
         else
-            tree->right = put(tree->right, key, value);
+            tree->right = putToTree(tree->right, key, value);
     } else {
         if (!tree->left)
-            tree->left = createTree(key, value, tree->comparator);
+            tree->left = createTree(key, value);
         else
-            tree->left = put(tree->left, key, value);
+            tree->left = putToTree(tree->left, key, value);
     }
     return balance(tree);
 }
 
-Value get(Tree* tree, Value key)
+Value getTreeElement(Tree* tree, Value key)
 {
     if (!tree)
         return wrapNone();
-    if (tree->comparator(tree->key, key) == 0)
+    if (equals(tree->key, key))
         return tree->value;
-    if (tree->comparator(key, tree->key) < 0)
-        return get(tree->left, key);
+    if (compare(key, tree->key) < 0)
+        return getTreeElement(tree->left, key);
     else
-        return get(tree->right, key);
+        return getTreeElement(tree->right, key);
 }
 
 Value getMinimum(Tree* tree)
 {
     if (!tree)
         return wrapNone();
-    return tree->left ? getMinimum(tree->left) : tree->key;
+    return (tree->left) ? getMinimum(tree->left) : tree->key;
 }
 
 Value getMaximum(Tree* tree)
 {
     if (!tree)
         return wrapNone();
-    return tree->right ? getMaximum(tree->right) : tree->key;
+    return (tree->right) ? getMaximum(tree->right) : tree->key;
 }
 
 Tree* findMinimum(Tree* tree)
@@ -158,14 +152,14 @@ Tree* removeMinimum(Tree* tree)
     return balance(tree);
 }
 
-Tree* removeKey(Tree* tree, Value key)
+Tree* removeTreeElementKey(Tree* tree, Value key)
 {
     if (!tree)
         return tree;
-    if (tree->comparator(key, tree->key) < 0) {
+    if (compare(key, tree->key) < 0) {
         tree->left = removeKey(tree->left, key);
         return balance(tree);
-    } else if (tree->comparator(key, tree->key) > 0) {
+    } else if (compare(key, tree->key) > 0) {
         tree->right = removeKey(tree->right, key);
         return balance(tree);
     } else {
@@ -186,37 +180,12 @@ Value getLowerBound(Tree* tree, Value key)
 {
     if (!tree)
         return wrapNone();
-    if (tree->comparator(tree->key, key) == 0)
-        return tree->key;
-    else if (tree->comparator(tree->key, key) < 0)
-        return getLowerBound(tree->right, key);
-    else {
-        Value foundValue = getLowerBound(tree->left, key);
-        return !isNone(foundValue) ? foundValue : tree->key;
-    }
+    return compare(tree->key, key) >= 0 ? tree->key : getLowerBound(tree->right, key);
 }
 
 Value getUpperBound(Tree* tree, Value key)
 {
     if (!tree)
         return wrapNone();
-    if (tree->comparator(tree->key, key) <= 0)
-        return getUpperBound(tree->right, key);
-    else {
-        Value foundValue = getUpperBound(tree->left, key);
-        return !isNone(foundValue) ? foundValue : tree->key;
-    }
-}
-
-Tree* changeKey(Tree* tree, Value oldKey, Value newKey)
-{
-    if (!tree || !hasKey(tree, oldKey))
-        return NULL;
-    if (tree->comparator(tree->key, oldKey) == 0)
-        tree->key = newKey;
-    else if (tree->comparator(oldKey, tree->key) > 0)
-        tree->right = changeKey(tree->right, oldKey, newKey);
-    else
-        tree->left = changeKey(tree->left, oldKey, newKey);
-    return balance(tree);
+    return compare(tree->key, key) > 0 ? tree->key : getUpperBound(tree->right, key);
 }
