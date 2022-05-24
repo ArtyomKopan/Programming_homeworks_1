@@ -78,6 +78,10 @@ void deleteTree(Tree* tree)
 {
     if (!tree)
         return;
+    if (tree->left)
+        deleteTree(tree->left);
+    if (tree->right)
+        deleteTree(tree->right);
     deleteTree(tree->left);
     deleteTree(tree->right);
     free(tree);
