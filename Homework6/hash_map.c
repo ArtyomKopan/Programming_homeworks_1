@@ -43,7 +43,6 @@ uint32_t hashString(char* string, int mod)
     uint32_t hash = 0;
     int length = strlen(string);
     for (int i = 0; i < length; ++i)
-        // hash += (string[i] * power(HASH_POLYNOMIAL_PARAMETER, length - i, mod)) % mod;
         hash = (hash * HASH_POLYNOMIAL_PARAMETER + string[i]) % mod;
     return hash % mod;
 }
@@ -56,7 +55,6 @@ uint32_t hashList(Value pointer, int mod)
     for (int i = 0; i < getListSize(list); ++i) {
         Value key = getListElement(list, i)->key;
         Value value = getListElement(list, i)->value;
-        // listHash += ((hash(key, mod) + HASH_POLYNOMIAL_PARAMETER * hash(value, mod)) % mod) * power(HASH_POLYNOMIAL_PARAMETER, getListSize(list) - i, mod) % mod;
         listHash += (((hash(key, mod) + HASH_POLYNOMIAL_PARAMETER * hash(value, mod)) % mod) * multiplayer) % mod;
         multiplayer *= HASH_POLYNOMIAL_PARAMETER;
         multiplayer %= mod;
@@ -112,6 +110,33 @@ void resizeHashMap(HashMap* map)
     for (int i = map->hashMapSize; i < 2 * map->hashMapSize; ++i)
         map->hashTable[i] = makeNewHashMapElement();
     map->hashMapSize *= 2;
+    ListElement* next = NULL;
+    for (int i = 0; i < map->hashMapSize / 2; ++i) {
+        for (ListElement* current = map->hashTable[i]->list->head; current; current = next) {
+            uint32_t newHash = map->hashFunction(current->key, map->hashMapSize);
+            if (newHash != i) {
+                // добавляем этот элемент в новую ячейку
+                addListElement(map->hashTable[newHash]->list, current->key, current->value, map->hashTable[newHash]->list->listSize);
+                if (getListSize(map->hashTable[newHash]->list) == 1)
+                    map->countFilledBuckets++;
+                // удаляем элемент из текущего списка
+                if (current->next)
+                    current->next->previous = current->previous;
+                else
+                    map->hashTable[i]->list->tail = current->previous;
+                if (current->previous)
+                    current->previous->next = current->next;
+                else
+                    map->hashTable[i]->list->head = current->next;
+                next = current->next;
+                free(current);
+                map->hashTable[i]->list->listSize--;
+                if (map->hashTable[i]->list->listSize == 0)
+                    map->countFilledBuckets--;
+            } else
+                next = current->next;
+        }
+    }
 }
 
 void deleteHashMap(HashMap* map)
@@ -137,6 +162,15 @@ void putToHashMap(HashMap* map, Value key, Value value)
     addListElement(map->hashTable[hashElement]->list, key, value, map->hashTable[hashElement]->list->listSize);
     if (getListSize(map->hashTable[hashElement]->list) == 1)
         map->countFilledBuckets++;
+}
+
+Value getHashMapElement(HashMap* map, Value key)
+{
+    uint32_t hash = map->hashFunction(key, map->hashMapSize);
+    for (ListElement* current = map->hashTable[hash]->list->head; current; current = current->next)
+        if (map->hashFunction(key, map->hashMapSize) == map->hashFunction(current->key, map->hashMapSize))
+            return current->value;
+    return wrapNone();
 }
 
 List* getHashMapElements(HashMap* map, Value key)

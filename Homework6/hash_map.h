@@ -32,6 +32,8 @@ HashMap* createHashMap(HashFunction hashFunction, Comparator comparator);
 
 void deleteHashMap(HashMap* map);
 
+Value getHashMapElement(HashMap* map, Value key);
+
 List* getHashMapElements(HashMap* map, Value key);
 
 void putToHashMap(HashMap* map, Value key, Value value);
