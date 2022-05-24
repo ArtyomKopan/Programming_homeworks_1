@@ -42,7 +42,13 @@ target_link_libraries(task_5.3 m)
 
 add_executable(task_3.1 Homework3/task_3.1.c Homework3/binary_number.c)
 
+add_executable(task_6.1 Homework6/task_6.1.c Homework6/hash_map.c Homework6/values.c Homework6/list.c)
+
+add_executable(task_5.1 Homework5/task_5.1.c Homework5/AVL_tree.c Homework5/values.c)
+
 add_executable(test_task_2.1 Testwork2/test_task_2.1.c)
+
+add_executable(task_7.1 Homework7/task_7.1.c Homework7/heap.c)
 
 add_executable(task_8.2 Homework8/task_8.2.c Homework8/automaton.c Homework8/automaton.h)
 
@@ -54,3 +60,6 @@ add_executable(final_task_2 Final/final_task_2.c)
 
 add_executable(retest_2.3 Retest2/retest_2.3.c Retest2/AVL_tree.c)
 target_link_libraries(retest_2.3 library)
+
+add_executable(retest_2.5 Retest2/retest_2.5.c)
+target_link_libraries(retest_2.5 library)
